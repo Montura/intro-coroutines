@@ -14,5 +14,15 @@ TODO: Write aggregation code.
  The corresponding test can be found in test/tasks/AggregationKtTest.kt.
  You can use 'Navigate | Test' menu action (note the shortcut) to navigate to the test.
 */
-fun List<User>.aggregate(): List<User> =
-    this
+
+fun doGroup(arg: List<User>): List<User> =
+    arg.groupBy { it.login }
+        .map { (login, contribList) -> User(login, contribList.sumOf { it.contributions }) }
+        .sortedByDescending { it.contributions }
+
+fun doGroupingBy(arg: List<User>): List<User> =
+    arg.groupingBy { it.login }
+        .fold(0) { acc, (_, contribCount) -> acc + contribCount }
+        .map { (login, contribList) -> User(login, contribList) }
+        .sortedByDescending { it.contributions }
+fun List<User>.aggregate(): List<User> = doGroup(this)
